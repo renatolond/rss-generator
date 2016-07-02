@@ -23,7 +23,7 @@ class SinfestController < ApplicationController
     ActiveRecord::Base.transaction do
       @channel.channel_items.destroy_all
 
-      while date.to_date < today do
+      while date.to_date <= today do
         pubdate = date.to_date.to_s
 
         link = "http://www.sinfest.net/view.php?date=#{pubdate}"
@@ -33,7 +33,7 @@ class SinfestController < ApplicationController
         end
         c.perform
 
-        if(c.status == '200 OK') then
+        if(c.status.include? '200') then
           html_doc = Nokogiri::HTML(c.body)
           title = html_doc.xpath('/html/body/div/table[4]/tr[1]/td/table/tbody/tr[1]/td').text
           description = html_doc.xpath('/html/body/div/table[4]/tr[1]/td/table/tbody/tr[2]/td').children.to_s

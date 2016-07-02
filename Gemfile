@@ -33,6 +33,7 @@ end
 group :test do
   gem 'capybara'
   gem 'webmock'
+  gem 'timecop'
 end
 
 group :development do
