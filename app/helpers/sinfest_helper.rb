@@ -1,0 +1,2 @@
+module SinfestHelper
+end
