@@ -2,9 +2,11 @@ require 'rails_helper'
 
 RSpec.describe SinfestController, type: :controller do
   ITEMS_TO_FETCH = 2
+  EXISTING_ITEMS = 3
+
   describe 'GET#index' do
     before(:each) do
-      @channel = FactoryGirl.create(:channel_sinfest)
+      @channel = FactoryGirl.create(:channel_sinfest, items_count: EXISTING_ITEMS)
       @stub = stub_request(:get, /.*sinfest\.net.*/)
       Timecop.travel('2016-07-01 12:00:00'.to_datetime)
       stub_const('SinfestController::ITEMS_TO_FETCH', ITEMS_TO_FETCH - 1)
@@ -73,6 +75,21 @@ RSpec.describe SinfestController, type: :controller do
 
     context 'Test view content' do
       render_views
+
+      it "Get index with channel updated should display #{EXISTING_ITEMS} existing items" do
+        #given
+        @channel.last_build_date = Time.now
+        @channel.save
+
+        #when
+        get :index
+
+        #then
+        for i in 0..EXISTING_ITEMS-1
+          expect(response.body).to include(@channel.channel_items[i].title)
+        end
+      end
+
       it 'Get index with channel more than one day old should update items in view' do
         #given
         @channel.last_build_date = 3.days.ago
