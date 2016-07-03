@@ -8,6 +8,8 @@ FactoryGirl.define do
       channel_type Channel.channel_types[:sinfest]
     end
 
+    association :channel_image, factory: :channel_image
+
     transient do
       items_count 3
     end

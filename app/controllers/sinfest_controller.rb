@@ -48,6 +48,7 @@ class SinfestController < ApplicationController
 
       @channel.last_build_date = Time.now
       @channel.save
+      @channel.reload
     end
   end
 end

@@ -50,7 +50,7 @@ RSpec.describe SinfestController, type: :controller do
       expect(a_request(:get, /.*sinfest\.net.*/)).to have_been_made.times(ITEMS_TO_FETCH)
     end
 
-    it "Get index with channel more than one day old should insert stubbed items in channel" do
+    it 'Get index with channel more than one day old should insert stubbed items in channel' do
       #given
       @channel.last_build_date = 3.days.ago
       @channel.save
@@ -69,6 +69,23 @@ RSpec.describe SinfestController, type: :controller do
       expect(@channel.channel_items.count).to eq(2)
       expect(@channel.channel_items[0].attributes.except(*exceptions)).to eq(item1.attributes.except(*exceptions))
       expect(@channel.channel_items[1].attributes.except(*exceptions)).to eq(item2.attributes.except(*exceptions))
+    end
+
+    context 'Test view content' do
+      render_views
+      it 'Get index with channel more than one day old should update items in view' do
+        #given
+        @channel.last_build_date = 3.days.ago
+        @channel.save
+        stub1 = stub_request(:get, 'http://www.sinfest.net/view.php?date=2016-06-30').to_return(body: File.read('spec/page_body.txt'), status: 200)
+        stub2 = stub_request(:get, 'http://www.sinfest.net/view.php?date=2016-07-01').to_return(body: File.read('spec/page2_body.txt'), status: 200)
+
+        #when
+        get :index
+
+        #then
+        expect(response.body).to include('June 30, 2016: Hero 2', 'July  1, 2016: Sweep 5')
+      end
     end
   end
 end
