@@ -2,7 +2,7 @@ require 'curb'
 
 class SinfestController < ApplicationController
   EXPIRE_AFTER = 24.hours
-  ITEMS_TO_FETCH = 2 # normally will be 7, this is just for initial charge.
+  ITEMS_TO_FETCH = 7
   FIRST_COMIC_DATE = '2000-01-17'.to_date
   def index
     @channel = Channel.find_by_channel_type(Channel.channel_types[:sinfest])
